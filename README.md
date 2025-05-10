@@ -64,5 +64,5 @@ Contributions are welcome! Please fork the repository and open a pull request.
 This project is licensed under the MIT License.
 
 ### 🔗 Connect
-🆔GitHub: sandipmavi
-📧Email: smavi.dev@gmail.com
+- 🆔GitHub: sandipmavi
+- 📧Email: smavi.dev@gmail.com
