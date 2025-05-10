@@ -2,7 +2,7 @@
 
 A full-stack real-time chat application built using **React + Vite** on the frontend and **Node.js + Express** on the backend. It supports user authentication, one-on-one messaging, and is designed to be scalable with planned support for video calling, group chats, and premium features in future updates.
 
-![Logo](./public/logo.png)
+![Logo](./assets/logo.png)
 
 ---
 
