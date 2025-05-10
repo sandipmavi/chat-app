@@ -1,0 +1,22 @@
+@import "tailwindcss";
+body {
+  @apply bg-slate-200;
+}
+.scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+.scrollbar::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+.scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full;
+}
+.scroll-container {
+  /* Hide scrollbar for Webkit-based browsers (Chrome, Safari, Edge) */
+  -ms-overflow-style: none; /* Hides scrollbar in IE and Edge */
+  scrollbar-width: none; /* Hides scrollbar in Firefox */
+}
+
+.scroll-container::-webkit-scrollbar {
+  display: none;
+}
