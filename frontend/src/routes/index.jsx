@@ -50,11 +50,11 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "",
+        path: "/home",
         element: <LandingPage />,
       },
       {
-        path: "/home",
+        path: "",
         element: <Home />,
         children: [
           {
