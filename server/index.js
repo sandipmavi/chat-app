@@ -8,14 +8,14 @@ const cookieParser = require("cookie-parser");
 const { app, server } = require("./socket/index.js");
 
 app.use(cookieParser());
-
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow requests from your frontend
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-    credentials: true, // Allow cookies and other credentials
+    origin: process.env.FRONTEND_URL,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true,
   })
 );
+console.log(process.env.FRONTEND_URL);
 
 app.get("/", (req, res) => {
   res.json({
