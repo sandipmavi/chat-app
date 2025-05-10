@@ -35,19 +35,29 @@ A full-stack real-time chat application built using **React + Vite** on the fron
 ---
 
 ## 📦 Installation & Setup
+### 📂 Frontend Setup (React + Vite)
+- cd client
+- npm install
+- npm run dev
+### ⚙️ Backend Setup (Node.js)
+- cd server
+- npm install
+- npm run dev
+
 
 ### Clone the Repository
+ 
+ - git clone https://github.com/your-username/chat-app.git
+ - cd chat-app
 
-```bash
-git clone https://github.com/your-username/chat-app.git
-cd chat-app
 
-## 📬 Contribution
+
+### 📬 Contribution
 Contributions are welcome! Please fork the repository and open a pull request.
 
-## 📄 License
+### 📄 License
 This project is licensed under the MIT License.
 
-## 🔗 Connect
+### 🔗 Connect
 🆔GitHub: sandipmavi
 📧Email: smavi.dev@gmail.com
