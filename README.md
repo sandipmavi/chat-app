@@ -50,7 +50,12 @@ A full-stack real-time chat application built using **React + Vite** on the fron
  - git clone https://github.com/your-username/chat-app.git
  - cd chat-app
 
-
+### ScreenShots
+![Landing Page](./assets/Screenshot-LandingPage.png)
+![Register Page](./assets/ScreenShot-Register.png)
+![Chat UI](./assets/ScreenShot-Chat.png)
+![Password](./assets/ScreenShot-Password.png)
+![Profile](./assets/ScreenShot-Profile.png)
 
 ### 📬 Contribution
 Contributions are welcome! Please fork the repository and open a pull request.
