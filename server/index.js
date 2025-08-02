@@ -10,7 +10,7 @@ const { app, server } = require("./socket/socket.js");
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: "https://chat-app-mavi.vercel.app",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
