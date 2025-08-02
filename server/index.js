@@ -12,7 +12,6 @@ app.use(
   cors({
     origin: "https://chat-app-mavi.vercel.app",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    credentials: true,
   })
 );
 
