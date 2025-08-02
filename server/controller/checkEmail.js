@@ -7,7 +7,7 @@ async function checkEmail(req, res) {
 
     if (!user) {
       return res.status(404).json({
-        // Changed to 404
+        
         message: "User not registered",
         error: true,
       });

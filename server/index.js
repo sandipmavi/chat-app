@@ -14,6 +14,12 @@ app.use(
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   })
 );
+app.get("/mavi", (req, res) => {
+  res.status(200).json({
+    status: true,
+    message: "reached the mavi route",
+  });
+});
 
 app.get("/", (req, res) => {
   res.json({
