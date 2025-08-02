@@ -5,7 +5,7 @@ require("dotenv").config();
 const router = require("./routes/index.js");
 
 const cookieParser = require("cookie-parser");
-const { app, server } = require("./socket/index.js");
+const { app, server } = require("./socket/socket.js");
 
 app.use(cookieParser());
 app.use(
@@ -15,7 +15,6 @@ app.use(
     credentials: true,
   })
 );
-console.log(process.env.FRONTEND_URL);
 
 app.get("/", (req, res) => {
   res.json({
