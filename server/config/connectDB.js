@@ -4,13 +4,12 @@ require("dotenv").config();
 async function connectDB() {
   try {
     console.log("Connecting to MongoDB...");
-    console.log("Using URI:", process.env.MONGODB_URI);
+    
 
     await mongoose.connect(process.env.MONGODB_URI);
 
-    mongoose.connection.on("connected", () => {
-      console.log("Successfully connected to MongoDB.");
-    });
+    console.log("Database Connected Successfully")
+    
 
     mongoose.connection.on("error", (error) => {
       console.error("MongoDB connection error:", error);

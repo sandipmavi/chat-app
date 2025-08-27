@@ -5,6 +5,12 @@ const UserModel = require("../models/userModel");
 async function updateUserDetail(req, res) {
   try {
     const token = req.cookies.token || "";
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        messagea: "UnAuthorized",
+      });
+    }
     const user = await getUserDetailsFromToken(token);
 
     const { name, profile_pic } = req.body;

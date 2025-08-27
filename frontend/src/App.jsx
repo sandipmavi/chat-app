@@ -1,12 +1,17 @@
+// App.jsx
 import { Outlet } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
-
-// import { Home } from "./pages/Home";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
     <>
-      <Toaster />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={2000}
+        draggable
+        pauseOnHover
+      />
+
       <main>
         <Outlet />
       </main>

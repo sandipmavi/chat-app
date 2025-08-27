@@ -1,22 +1,49 @@
 @import "tailwindcss";
-body {
-  @apply bg-slate-200;
-}
-.scrollbar::-webkit-scrollbar {
-  width: 10px;
-}
-.scrollbar::-webkit-scrollbar-track {
-  @apply bg-slate-100;
-}
-.scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 rounded-full;
-}
-.scroll-container {
-  /* Hide scrollbar for Webkit-based browsers (Chrome, Safari, Edge) */
-  -ms-overflow-style: none; /* Hides scrollbar in IE and Edge */
-  scrollbar-width: none; /* Hides scrollbar in Firefox */
+:root[data-theme="light"] {
+  --accent: #0ac400;
+  --bg: #ffffff;
+  --text: #000000;
 }
 
-.scroll-container::-webkit-scrollbar {
-  display: none;
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.accent-text {
+  color: var(--accent);
+}
+
+.accent-bg {
+  background-color: var(--accent);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.4);
+  border-radius: 9999px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.7);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.7);
+}
+html {
+  scroll-behavior: smooth;
 }

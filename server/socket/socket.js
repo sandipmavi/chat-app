@@ -1,6 +1,7 @@
 const express = require("express");
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
+
 const http = require("http");
 const {
   ConversationModel,
@@ -8,7 +9,7 @@ const {
 } = require("../models/conversationModel.js");
 const UserModel = require("../models/userModel.js");
 const getUserDetailsFromToken = require("../helpers/getUserDetailsFromToken.js");
-const getConversation = require("../helpers/getConversation.js");
+const getConversation = require("../helpers/getConversation2.js");
 
 const app = express();
 const server = http.createServer(app);
@@ -20,7 +21,6 @@ const io = new Server(server, {
   },
 });
 
-// Map for tracking userId -> Set of socketIds
 const onlineUsers = new Map();
 
 function addOnlineUser(userId, socketId) {

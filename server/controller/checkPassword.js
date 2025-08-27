@@ -1,6 +1,6 @@
 const UserModel = require("../models/userModel");
 const bcryptjs = require("bcryptjs");
-const jwt = require("jsonwebtoken"); // Ensure this import is correct
+ // Ensure this import is correct
 
 async function checkPassword(req, res) {
   try {
@@ -22,24 +22,7 @@ async function checkPassword(req, res) {
       });
     }
 
-    const tokenData = {
-      id: userId,
-      email: user.email,
-    };
-
-    const token = await jwt.sign(tokenData, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1d",
-    });
-    const cookieOption = {
-      httpOnly: true,
-      secure: true,
-    };
-
-    return res.cookie("token", token, cookieOption).status(200).json({
-      message: "Login successfully",
-      token: token,
-      success: true,
-    });
+    
   } catch (error) {
     return res.status(500).json({
       message: error.message || error,

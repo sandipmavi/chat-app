@@ -1,37 +1,90 @@
+const mongoose = require("mongoose");
 const { ConversationModel } = require("../models/conversationModel");
+
 const getConversation = async (currentUserId) => {
-  if (!currentUserId) {
-    console.error("current user ID is not there:", currentUserId);
-    return;
+  if (!currentUserId || !mongoose.Types.ObjectId.isValid(currentUserId)) {
+    console.error("Invalid user ID:", currentUserId);
+    return [];
   }
-  //|| !mongoose.Types.ObjectId.isValid(currentUserId)
 
-  console.log("Current user", currentUserId);
-  const currentUserConversation = await ConversationModel.find({
-    $or: [{ sender: currentUserId }, { reciever: currentUserId }],
-  })
-    .sort({ updatedAt: -1 })
-    .populate("messages")
-    .populate("sender")
-    .populate("reciever");
+  const conversations = await ConversationModel.aggregate([
+    {
+      $match: {
+        $or: [
+          { sender: new mongoose.Types.ObjectId(currentUserId) },
+          { reciever: new mongoose.Types.ObjectId(currentUserId) },
+        ],
+      },
+    },
+    { $sort: { updatedAt: -1 } },
 
-  const conversation = currentUserConversation.map((conv) => {
-    const countUnseenMsg = conv.messages.reduce((prev, curr) => {
-      if (curr?.msgByUserId.toString() !== currentUserId) {
-        return prev + (curr?.seen ? 0 : 1);
-      } else {
-        return prev;
-      }
-    }, 0);
+    
+    {
+      $lookup: {
+        from: "messages",
+        let: { msgIds: "$messages" },
+        pipeline: [
+          { $match: { $expr: { $in: ["$_id", "$$msgIds"] } } },
+          { $sort: { createdAt: -1 } },
+          { $limit: 1 }, // only latest
+        ],
+        as: "lastMsg",
+      },
+    },
 
-    return {
-      _id: conv._id,
-      sender: conv?.sender,
-      reciever: conv?.reciever,
-      unSeenMsg: countUnseenMsg,
-      lastMsg: conv.messages[conv?.messages.length - 1],
-    };
-  });
-  return conversation;
+    
+    {
+      $lookup: {
+        from: "messages",
+        let: { msgIds: "$messages" },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $in: ["$_id", "$$msgIds"] },
+              msgByUserId: { $ne: new mongoose.Types.ObjectId(currentUserId) },
+              seen: false,
+            },
+          },
+          { $count: "unSeenMsg" },
+        ],
+        as: "unSeenMsg",
+      },
+    },
+
+    
+    {
+      $project: {
+        sender: 1,
+        reciever: 1,
+        lastMsg: { $arrayElemAt: ["$lastMsg", 0] },
+        unSeenMsg: {
+          $ifNull: [{ $arrayElemAt: ["$unSeenMsg.unSeenMsg", 0] }, 0],
+        },
+      },
+    },
+
+    // Populate sender/receiver dat
+    {
+      $lookup: {
+        from: "users",
+        localField: "sender",
+        foreignField: "_id",
+        as: "sender",
+      },
+    },
+    { $unwind: "$sender" },
+    {
+      $lookup: {
+        from: "users",
+        localField: "reciever",
+        foreignField: "_id",
+        as: "reciever",
+      },
+    },
+    { $unwind: "$reciever" },
+  ]);
+
+  return conversations;
 };
+
 module.exports = getConversation;

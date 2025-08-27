@@ -15,17 +15,11 @@ app.use(
     credentials: true,
   })
 );
-app.get("/mavi", (req, res) => {
-  res.status(200).json({
-    status: true,
-    message: "reached the mavi route",
-  });
-});
 
 app.get("/", (req, res) => {
   res.json({
     status: true,
-    message: "Server is running fine", // Changed "Message" to "message" for consistency
+    message: "Server is running fine",
   });
 });
 

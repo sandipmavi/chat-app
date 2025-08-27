@@ -45,7 +45,7 @@ const Avatar = ({
     <div
       className={`relative flex items-center justify-center rounded-full overflow-hidden ${
         shadow ? "shadow-lg" : ""
-      } border border-[#00bac4]`}
+      } border border-[var(--accent)]`}
       style={{ width, height }}
     >
       {imageUrl && !imgError ? (

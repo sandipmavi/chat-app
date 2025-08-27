@@ -11,6 +11,7 @@ import EditUserDetails from "./EditUserDetails";
 
 import { FaImage, FaVideo } from "react-icons/fa6";
 import { logout } from "../redux/userSlice";
+import { getSocket } from "../services/socketService";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -19,14 +20,42 @@ const Sidebar = () => {
   const [editUserOpen, setEditUserOpen] = useState(false);
   const [allUser, setAllUser] = useState([]);
   const [openSearchUser, setOpenSearchUser] = useState(false);
-  const socketConnection = useSelector(
-    (state) => state?.user?.socketConnection
-  );
+  // const socketConnection = useSelector(
+  //   (state) => state?.user?.socketConnection
+  // );
+  const socket = getSocket();
+
+  // useEffect(() => {
+  //   if (socketConnection) {
+  //     socketConnection.emit("sidebar", user._id);
+  //     socketConnection.on("conversation", (data) => {
+  //       const conversationUserData = data.map((convUser, index) => {
+  //         if (convUser.sender?._id === convUser.reciever?._id) {
+  //           return {
+  //             ...convUser,
+  //             userDetails: convUser.sender,
+  //           };
+  //         } else if (convUser.reciever?._id !== user?._id) {
+  //           return {
+  //             ...convUser,
+  //             userDetails: convUser.reciever,
+  //           };
+  //         } else {
+  //           return {
+  //             ...convUser,
+  //             userDetails: convUser.sender,
+  //           };
+  //         }
+  //       });
+  //       setAllUser(conversationUserData);
+  //     });
+  //   }
+  // }, [socketConnection, user]);
 
   useEffect(() => {
-    if (socketConnection) {
-      socketConnection.emit("sidebar", user._id);
-      socketConnection.on("conversation", (data) => {
+    if (socket) {
+      socket.emit("sidebar", user._id);
+      socket.on("conversation", (data) => {
         const conversationUserData = data.map((convUser, index) => {
           if (convUser.sender?._id === convUser.reciever?._id) {
             return {
@@ -48,10 +77,11 @@ const Sidebar = () => {
         setAllUser(conversationUserData);
       });
     }
-  }, [socketConnection, user]);
+  }, [socket, user]);
+
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/email");
+    navigate("/");
     localStorage.clear();
   };
 
@@ -115,7 +145,7 @@ const Sidebar = () => {
         <div className=" h-[calc(100vh-65px)] overflow-x-hidden overflow-y-auto scrollbar">
           {allUser.length === 0 && (
             <div className="mt-20">
-              <div className="flex justify-center items-center my-4 text-slate-500">
+              <div className="flex justify-center items-center my-4 text-red-500">
                 <GoArrowUpLeft size={50} />
               </div>
               <p className="text-lg text-center text-slate-500 ">
@@ -127,7 +157,7 @@ const Sidebar = () => {
           {allUser.map((conv, index) => {
             return (
               <NavLink
-                to={"/" + conv.userDetails._id}
+                to={conv.userDetails._id}
                 key={conv?._id}
                 className="flex items-center gap-3 px-2 py-3  hover:bg-slate-100 cursor-pointer border border-slate-100 "
               >

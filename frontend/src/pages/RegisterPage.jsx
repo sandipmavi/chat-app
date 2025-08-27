@@ -1,13 +1,16 @@
-// import React from "react";
-
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { uploadFile } from "../helper/uploadFile";
 import axios from "axios";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
+import { AppContext } from "@/context/AppContext";
+import { setToken } from "@/redux/userSlice";
+import { useDispatch } from "react-redux";
 
 export const RegisterPage = () => {
+  const dispatch = useDispatch();
+  const { setShowLogin } = useContext(AppContext);
   const navigate = useNavigate();
   const [data, setData] = useState({
     name: "",
@@ -15,152 +18,170 @@ export const RegisterPage = () => {
     password: "",
     profile_pic: "",
   });
-  const [uploadPhoto, setUploadPhoto] = useState("");
+  const [uploadPhoto, setUploadPhoto] = useState(null);
+
+  // ✅ Manage text inputs
   const handleOnChange = (e) => {
     const { name, value } = e.target;
-    setData((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
+    setData((prev) => ({ ...prev, [name]: value }));
   };
+
+  // ✅ Handle image upload
   const handleUploadPhoto = async (e) => {
     const file = e.target.files[0];
-    const uploadPhoto = await uploadFile(file);
-    console.log("UploadPhoto:", uploadPhoto);
+    if (!file) return;
 
-    setUploadPhoto(file);
-    setData((prev) => {
-      return {
-        ...prev,
-        profile_pic: uploadPhoto?.url,
-      };
-    });
+    try {
+      const uploaded = await uploadFile(file);
+      setUploadPhoto(URL.createObjectURL(file)); // preview
+      setData((prev) => ({ ...prev, profile_pic: uploaded?.url }));
+    } catch (err) {
+      toast.error("Upload failed. Try again!");
+    }
   };
-  const handleClearUplaod = (e) => {
-    e.stopPropagation();
+
+  const handleClearUpload = (e) => {
     e.preventDefault();
     setUploadPhoto(null);
+    setData((prev) => ({ ...prev, profile_pic: "" }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    e.stopPropagation();
+    console.log(data);
     const URL = `${import.meta.env.VITE_BACKEND_URL}/api/register`;
 
     try {
       const response = await axios.post(URL, data);
-      console.log("response", response);
-      toast.success(response.data.message);
+      console.log(response);
+      if (response.data.success) {
+        setShowLogin(null);
+        dispatch(setToken(response.data.token));
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.data));
 
-      if (response.data.message) {
+        setData({ name: "", email: "", password: "", profile_pic: "" });
         setUploadPhoto(null);
-        setData({
-          name: "",
-
-          email: "",
-          password: "",
-          profile_pic: "",
-        });
-        navigate("/email");
+        navigate("/home");
+        toast.success(response.data.message || "Registered successfully!");
       }
     } catch (error) {
-      toast.error(error?.message);
-      console.log("error", error);
-
-      if (error.response) {
-        console.error("Server Error:", error.response.data);
-      } else if (error.request) {
-        console.error("Network Error:", error.request);
-      } else {
-        console.error("Error Setting Up Request:", error.message);
-      }
+      toast.error(error?.response?.data?.message || "Registration failed");
     }
-    console.log("Data", data);
   };
 
   return (
-    <div className="mt-5 ">
-      <div className="bg-white w-full max-w-sm mx-2 rounded overflow-hidden p-4 mx-auto  ">
-        <h3 className="ml-22 text-xl">Welcome to Chatify</h3>
+    <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 relative">
+      <h2 className="text-2xl font-bold text-center text-gray-800">
+        Create an Account
+      </h2>
+      <p className="text-center text-gray-500 mb-6">
+        Join <span className="text-[var(--accent)] font-semibold">ChatS</span>{" "}
+        and start connecting 🚀
+      </p>
 
-        <form className="grid gap-3" onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="name">Name:</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={data.name}
-              placeholder="Enter your name"
-              className="bg-slate-100 px-2 py-1 focus:outline-[#00bac4]"
-              onChange={handleOnChange}
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="email">Email:</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={data.email}
-              placeholder="Enter your email"
-              className="bg-slate-100 px-2 py-1 focus:outline-[#00bac4]"
-              onChange={handleOnChange}
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="password">Password:</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={data.password}
-              placeholder="Enter your password"
-              className="bg-slate-100 px-2 py-1 focus:outline-[#00bac4]"
-              onChange={handleOnChange}
-            />
-          </div>
-          <div className="flex flex-col gap-1 ">
-            <label htmlFor="profile_pic">
-              Photo:
-              <div className="h-14 bg-slate-200 flex justify-center items-center cursor-pointer border hover:border-[#00bac4]">
-                <p className="text-sm max-w-[300px] text-ecllipse line-clamp-1 ">
-                  {uploadPhoto?.name
-                    ? uploadPhoto.name
-                    : "Upload Profile Photo"}
-                </p>
-                {uploadPhoto?.name && (
-                  <button
-                    className="text-lg ml-2 hover:text-red-600"
-                    onClick={handleClearUplaod}
-                  >
-                    <IoClose />
-                  </button>
-                )}
-              </div>
+      <form className="grid gap-5" onSubmit={handleSubmit}>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="name" className="text-sm font-medium text-gray-700">
+            Full Name
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={data.name}
+            placeholder="Enter your name"
+            className="px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--accent)] outline-none"
+            onChange={handleOnChange}
+            required
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="email" className="text-sm font-medium text-gray-700">
+            Email Address
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={data.email}
+            placeholder="you@example.com"
+            className="px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--accent)] outline-none"
+            onChange={handleOnChange}
+            required
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label
+            htmlFor="password"
+            className="text-sm font-medium text-gray-700"
+          >
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={data.password}
+            placeholder="••••••••"
+            className="px-3 py-2  rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--accent)] outline-none"
+            onChange={handleOnChange}
+            required
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
+            Profile Photo
+          </label>
+          <div className="flex items-center gap-3">
+            <label
+              htmlFor="profile_pic"
+              className="cursor-pointer text-[var(--accent)] flex items-center gap-2 px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg hover:border-[var(--accent)] transition"
+            >
+              Upload
             </label>
-            <input
-              type="file"
-              id="profile_pic"
-              name="profile_pic"
-              className="bg-slate-100 px-2 py-1 focus:outline-[#00bac4] hidden"
-              onChange={handleUploadPhoto}
-            />
+            {uploadPhoto && (
+              <div className="relative">
+                <img
+                  src={uploadPhoto}
+                  alt="preview"
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+                <button
+                  onClick={handleClearUpload}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                >
+                  <IoClose size={14} />
+                </button>
+              </div>
+            )}
           </div>
-          <button className="bg-[#00bac4] px-4 py-1 rounded hover:bg-[#0bcbd4] mt-2 font-bold text-white leading-relaxed tracking-wide">
-            Register
-          </button>
-        </form>
-        <p className=" my-3 mt-2 text-sm text-center">
-          Already have an account ?{" "}
-          <Link to={"/email"} className="hover:text-[#00bac4] font-semibold">
-            Login
-          </Link>
-        </p>
-      </div>
+          <input
+            type="file"
+            id="profile_pic"
+            accept="image/*"
+            className="hidden"
+            onChange={handleUploadPhoto}
+          />
+        </div>
+
+        <button className="w-full bg-[var(--accent)] hover:opacity-80 text-white font-semibold py-2 rounded-lg transition">
+          Register
+        </button>
+      </form>
+
+      <p className="text-center text-sm text-gray-600 mt-4">
+        Already have an account?{" "}
+        <span
+          onClick={() => setShowLogin("login")}
+          className="cursor-pointer text-[var(--accent)] font-semibold"
+        >
+          Login
+        </span>
+      </p>
     </div>
   );
 };
-
-//export default RegisterPage;

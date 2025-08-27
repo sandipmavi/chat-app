@@ -11,7 +11,7 @@ const initialState = {
 };
 
 export const userSlice = createSlice({
-  name: "counter",
+  name: "user",
   initialState,
   reducers: {
     setUser: (state, action) => {
@@ -35,7 +35,7 @@ export const userSlice = createSlice({
       state.onlineUser = action.payload;
     },
     setSocketConnection: (state, action) => {
-      console.log(action.payload)
+      console.log(action.payload);
       state.socketConnection = action.payload;
     },
   },

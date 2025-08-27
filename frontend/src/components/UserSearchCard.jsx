@@ -5,9 +5,9 @@ import { Link } from "react-router-dom";
 const UserSearchCard = ({ user, onClose }) => {
   return (
     <Link
-      to={"/" + user?._id}
+      to={user?._id}
       onClick={onClose}
-      className="flex gap-3 items-center mt-3 p-2 lg:p-4 border border-transparent border-b-slate-200 hover:border-[#00bac4] rounded"
+      className="flex gap-3 items-center mt-3 p-2 lg:p-4 border border-transparent border-b-slate-200 hover:border-[var(--accent)] rounded"
     >
       <div>
         <Avatar
@@ -22,7 +22,9 @@ const UserSearchCard = ({ user, onClose }) => {
       </div>
       <div>
         <div className="font-bold text-ellipsis line-clamp-1">{user?.name}</div>
-        <p className="text-sm text-ellipsis line-clamp-1 ">{user?.email}</p>
+        <p className="text-sm text-[var(--accent)] text-ellipsis line-clamp-1 ">
+          {user?.email}
+        </p>
       </div>
     </Link>
   );
